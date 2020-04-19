@@ -19,7 +19,7 @@ public final class ItemChat extends JavaPlugin implements EventHandler, Listener
         getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "ItemChat has loaded. Thanks for downloading (https://github.com/ssh-sysadmin/itemchat)");
         getServer().getPluginManager().registerEvents(this, this);
         getCommand("i").setExecutor(new i());
-        // Plugin startup message
+        // Plugin startup message - Plugin made by SSH#4388
 
     }
     @EventHandler
