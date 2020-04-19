@@ -1,0 +1,11 @@
+name: ItemChat
+version: ${project.version}
+main: tech.sshdoes.itemchat.ItemChat
+api-version: 1.14
+authors: [SSH]
+description: Puts your item in chat
+website: sshdoes.tech
+commands:
+  i:
+    description: testing
+    aliases: [item]
