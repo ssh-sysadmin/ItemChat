@@ -1,5 +1,6 @@
 package tech.sshdoes.itemchat;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -34,7 +35,7 @@ public final class ItemChat extends JavaPlugin implements Listener {
         //TextComponent header = new TextComponent("");
         if(message.equalsIgnoreCase("[i]")) {
             TextComponent tc = new TextComponent(Objects.requireNonNull(item.getItemMeta()).getDisplayName());
-            TextComponent hovermessage = new TextComponent((net.md_5.bungee.api.chat.BaseComponent) item.getItemMeta().getLore());
+            TextComponent hovermessage = new TextComponent((BaseComponent) item.getItemMeta().getLore());
             tc.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hovermessage).create()));
             //header.addExtra(message2);
             //TextComponent finalmessage = header;
