@@ -26,12 +26,14 @@ public final class ItemChat extends JavaPlugin implements Listener {
         // Plugin startup message - Plugin made by SSH#4388
 
     }
-    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChatSend(AsyncPlayerChatEvent e){
         Player player = e.getPlayer();
         String message = e.getMessage();
-        ItemStack item = player.getItemInHand();
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if(item == null){
+            player.sendMessage(ChatColor.AQUA + "You aren't holding anything");
+        }
         //TextComponent header = new TextComponent("");
         if(message.equalsIgnoreCase("[i]")) {
             TextComponent tc = new TextComponent(Objects.requireNonNull(item.getItemMeta()).getDisplayName());
