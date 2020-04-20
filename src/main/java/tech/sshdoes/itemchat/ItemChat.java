@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -34,13 +35,11 @@ public final class ItemChat extends JavaPlugin implements Listener {
         if(item == null){
             player.sendMessage(ChatColor.AQUA + "You aren't holding anything");
         }
-        //TextComponent header = new TextComponent("");
+        ItemMeta itemMeta = item.getItemMeta();
         if(message.equalsIgnoreCase("[i]")) {
-            TextComponent tc = new TextComponent(Objects.requireNonNull(item.getItemMeta()).getDisplayName());
-            TextComponent hovermessage = new TextComponent((BaseComponent) item.getItemMeta().getLore());
+            TextComponent tc = new TextComponent((itemMeta.getDisplayName()));
+            TextComponent hovermessage = new TextComponent((BaseComponent) itemMeta.getLore());
             tc.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hovermessage).create()));
-            //header.addExtra(message2);
-            //TextComponent finalmessage = header;
             e.setCancelled(true);
             player.chat(tc.toLegacyText());
 
