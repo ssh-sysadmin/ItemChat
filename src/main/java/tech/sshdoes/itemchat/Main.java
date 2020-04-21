@@ -4,6 +4,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,10 +21,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Map;
 
 public class Main extends JavaPlugin implements Listener {
-
     private static Main instance;
 
     public void onEnable() {
+        getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "ItemChat Has Loaded");
         instance=this;
         super.onEnable();
 
@@ -50,7 +51,7 @@ public class Main extends JavaPlugin implements Listener {
             }
             TextComponent comp = new TextComponent(String.format(e.getFormat(), e.getPlayer().getName(), ""));
             TextComponent tc = new TextComponent(itemMeta.getDisplayName().equals("") ? item.getType().toString() : itemMeta.getDisplayName());
-            BaseComponent hover = new TextComponent(itemMeta.hasLore() ? String.join("\n", itemMeta.getLore()) : "No Lore");
+            BaseComponent hover = new TextComponent(itemMeta.hasLore() ? String.join("\n", itemMeta.getLore()) : "");
             BaseComponent enchants = new TextComponent(convertEnchants(item));
             tc.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(enchants).append("\n").append(hover).create()));
             Bukkit.getOnlinePlayers().forEach(player -> player.spigot().sendMessage(comp, tc));
@@ -62,7 +63,7 @@ public class Main extends JavaPlugin implements Listener {
         if (!item.getItemMeta().hasEnchants()) return "";
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<Enchantment, Integer> entry : item.getItemMeta().getEnchants().entrySet()) {
-            builder.append(entry.getKey().getKey().getKey() + " " + toRoman(entry.getValue()) + "\n");
+            builder.append(WordUtils.capitalizeFully(entry.getKey().getKey().getKey().toLowerCase().replaceAll("_", "")) + " " + toRoman(entry.getValue()) + "\n");
         }
         return builder.toString().trim();
     }
