@@ -4,7 +4,10 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,35 +17,74 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Objects;
+import java.util.Map;
 
 
-public final class ItemChat extends JavaPlugin implements Listener {
+class Main extends JavaPlugin implements Listener {
 
 
-    @Override
+    private static Main instance;
+
     public void onEnable() {
-        getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "ItemChat has loaded. Thanks for downloading (https://github.com/ssh-sysadmin/itemchat)");
-        getServer().getPluginManager().registerEvents(this, this);
-        // Plugin startup message - Plugin made by SSH#4388
+        instance=this;
+        super.onEnable();
 
+        Bukkit.getPluginManager().registerEvents(this, this);
     }
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onChatSend(AsyncPlayerChatEvent e){
-        Player player = e.getPlayer();
+
+    public void onDisable() {
+        super.onDisable();
+    }
+
+    public static Main getInstance() {
+        return instance;
+    }
+
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e) {
         String message = e.getMessage();
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if(item == null){
-            player.sendMessage(ChatColor.AQUA + "You aren't holding anything");
-        }
+        ItemStack item = e.getPlayer().getInventory().getItemInMainHand();
         ItemMeta itemMeta = item.getItemMeta();
-        if(message.equalsIgnoreCase("[i]")) {
-            TextComponent tc = new TextComponent((itemMeta.getDisplayName()));
-            TextComponent hovermessage = new TextComponent((BaseComponent) itemMeta.getLore());
-            tc.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hovermessage).create()));
+        if (message.equalsIgnoreCase("[i]")) {
             e.setCancelled(true);
-            player.chat(tc.toLegacyText());
-
+            if (item == null || item.getType().equals(Material.AIR)) {
+                e.getPlayer().sendMessage(ChatColor.AQUA + "You aren't holding anything");
+                return;
+            }
+            TextComponent comp = new TextComponent(String.format(e.getFormat(), e.getPlayer().getName(), ""));
+            TextComponent tc = new TextComponent(itemMeta.getDisplayName().equals("") ? item.getType().toString() : itemMeta.getDisplayName());
+            BaseComponent hover = new TextComponent(itemMeta.hasLore() ? String.join("\n", itemMeta.getLore()) : "No Lore");
+            BaseComponent enchants = new TextComponent(convertEnchants(item));
+            tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(enchants).append("\n").append(hover).create()));
+            Bukkit.getOnlinePlayers().forEach(player -> player.spigot().sendMessage(comp, tc));
         }
     }
+
+    private String convertEnchants(ItemStack item) {
+        if (!item.hasItemMeta()) return "";
+        if (!item.getItemMeta().hasEnchants()) return "";
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<Enchantment, Integer> entry : item.getItemMeta().getEnchants().entrySet()) {
+            builder.append(entry.getKey().getKey().getKey() + " " + toRoman(entry.getValue()) + "\n");
+        }
+        return builder.toString().trim();
+    }
+
+    private String toRoman(Integer value) {
+        switch (value) {
+            case 1:
+                return "I";
+            case 2:
+                return "II";
+            case 3:
+                return "III";
+            case 4:
+                return "IV";
+            case 5:
+                return "V";
+            default:
+                return "";
+        }
+    }
+
 }
