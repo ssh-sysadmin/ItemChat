@@ -1,6 +1,6 @@
 name: ItemChat
 version: 1.0-SNAPSHOT
-main: tech.sshdoes.itemchat.ItemChat
+main: tech.sshdoes.itemchat.Main
 api-version: 1.14
 authors: [SSH]
 description: Puts your item in chat
